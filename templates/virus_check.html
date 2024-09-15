@@ -1,0 +1,88 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+
+      <div class="container-fluid py-4">
+
+        <div class="row">
+          <div class="col-xl-12 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-body p-3">
+                <div class="row">
+                  <div class="col-3">
+                  </div>
+                  <div class="col-4 text-end">
+                    <input type="file" id="virus_check_file" class="form-control">
+                  </div>
+                  <div class="col-4">
+                    <a href="#" id ="ioc_button" class="btn btn-sm btn-neutral" style = "background-color: #63B3ED; color: white;">CHECK</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row mt-4">
+          <div class="col-lg-4 mb-lg-0 mb-4">
+            <div class="card z-index-2 h-100">
+              <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize" style="color: green;text-align: center; vertical-align: middle;">White_ip</h6>
+              </div>
+              <div class="card-body">
+                <div class="card">
+                  <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green;font-size: 28px;text-align: center; padding-left: 0;line-height:1.2;">{{ df_normal }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-lg-4 mb-lg-0 mb-4">
+            <div class="card z-index-2 h-100">
+              <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize" style="color: red;text-align: center; vertical-align: middle;">Black_ip</h6>
+              </div>
+              <div class="card-body">
+                <div class="card">
+                  <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: red;font-size: 28px; text-align: center; padding-left: 0;vertical-align: middle;line-height:1.2;">{{ df_malicious }}</textarea></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 mb-lg-0 mb-4">
+            <div class="card z-index-2 h-100">
+              <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize" style="color: red;text-align: center; vertical-align: middle">Black_list</h6>
+              </div>
+              <div class="card-body">
+                <div class="card">
+                  <textarea id="blacklist-now" class="form-control" rows="10" style="height: 500px;font-size: 28px;color: red; text-align: center; padding-left: 0;line-height:1.2;">{{black_list_new}}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+  
+        </div>
+  
+
+
+
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+{% endblock javascripts %}

@@ -1,0 +1,47 @@
+{% extends 'layouts/base-fullscreen.html' %}
+
+{% block title %} Sign IN {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <main class="main-content  mt-0">
+
+    <section>
+      <div class="page-header min-vh-100 d-flex align-items-center">
+        <div class="container">
+          <div class="row d-flex ">
+            <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
+              <div class="card card-plain">
+                <div class="card-header pb-0 text-start">
+                  <h4 class="font-weight-bolder">Đăng nhập</h4>
+                  <p class="mb-0">Đăng nhập để sử dụng hệ thống</p>
+                </div>
+                <div class="card-body">
+                  <form role="form">
+                    <div class="mb-3">
+                      <input type="email" class="form-control form-control-lg" placeholder="Email/Username" aria-label="Email">
+                    </div>
+                    <div class="mb-3">
+                      <input type="email" class="form-control form-control-lg" placeholder="Password" aria-label="Password">
+                    </div>
+                    <div class="text-center">
+                      <button type="button" id="sign_in_button" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Đăng nhập</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

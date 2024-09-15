@@ -1,0 +1,98 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Billing {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="min-height-300 bg-warning position-absolute w-100"></div>
+
+  {% include "includes/sidenav.html" %}
+
+  <main class="main-content position-relative border-radius-lg ">
+
+    {% include "includes/navigation.html" %}
+
+    <div class="container-fluid py-4">
+
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="row">
+            <div class="col-xl-6 mb-xl-0 mb-4">
+              <div class="card bg-transparent shadow-xl">
+                <div class="overflow-hidden position-relative border-radius-xl" style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/card-visa.jpg');">
+                  <span class="mask bg-gradient-dark"></span>
+            
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <div class="card">
+            <div class="card-header pb-0 px-3">
+              <h6 class="mb-0">Chi tiết luồng dữ liệu</h6>
+            </div>
+            <div class="card-body pt-4 p-3">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-12">
+            <table class="table table-sm table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-center bg-white">MAC đích</th>
+                  <th class="text-center text-light bg-secondary">MAC nguồn</th>
+                  <th class="text-center bg-white">Kiểu</th>
+                  <th class="text-center bg-white">Độ dài</th>
+                  <th class="text-center bg-white">ID</th>
+                  <th class="text-center bg-white">TTL</th>
+                  <th class="text-center text-light bg-secondary">IP nguồn</th>
+                  <th class="text-center bg-white">IP đích</th>
+                  <th class="text-center bg-white">SEQ</th>
+                  <th class="text-center text-light bg-secondary">Port nguồn</th>
+                  <th class="text-center bg-white">Port đích</th>
+                  <th class="text-center bg-white">Độ dịch chuyển</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for packet in packet_list %}
+                <tr>
+                  <td class="text-center bg-white">{{packet['Ethernet']['dst']}}</th>
+                  <td class="text-center text-light bg-secondary">{{packet['Ethernet']['src']}}</td>
+                  <td class="text-center bg-white">{{packet['Ethernet']['type']}}</td>
+                  <td class="text-center bg-white">{{packet['IP']['len']}}</td>
+                  <td class="text-center bg-white">{{packet['IP']['id']}}</td>
+                  <td class="bg-white">Giá trị TTL</td>
+                  <td class="text-light bg-secondary">{{packet['IP']['src']}}</td>
+                  <th class="bg-white">{{packet['IP']['dst']}}</th>
+                  <td class="text-center bg-white">{{packet['TCP']['seq']}}</td>
+                  <th class="text-center text-light bg-secondary">{{packet['TCP']['sport']}}</th>
+                  <td class="text-center bg-white">{{packet['TCP']['dport']}}</td>
+                  <th class="text-center bg-white">{{packet['TCP']['dataofs']}}</th>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+        </div>
+      </div>
+      {% include "includes/footer.html" %}
+
+    </div>
+
+  </main> 
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

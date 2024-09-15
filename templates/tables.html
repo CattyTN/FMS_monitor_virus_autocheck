@@ -1,0 +1,125 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Tables {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Giám sát FMS</h6>
+          </div>
+          <div class="col-lg-6 col-5 text-right">
+            <a href="#" id ="start_button" class="btn btn-sm btn-neutral" style = "background-color: white;">GIÁM SÁT</a>
+            <a href="#" id ="end_button" class="btn btn-sm btn-neutral" style = "background-color: white;">DỪNG</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Thông báo</h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;height: 400px;">
+            <table class="table align-items-center table-flush" style="table-layout: fixed; width: 100%;">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort align-items-center" data-sort="name" style="text-align: center;">IP</th>
+                  <th scope="col" class="sort" data-sort="budget" style="text-align: center;">MAC</th>
+                  <th scope="col" class="sort" data-sort="status" style="text-align: center;">TIME</th>
+                  <th scope="col" class="sort" data-sort="status" style="text-align: center;">LEVEL</th>
+                  <th scope="col" class="sort" data-sort="completion" style="text-align: center;">BEHAVIOR</th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                <tr>
+                  <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">
+                    000.000.000.000
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    00-00-00-00-00-00
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    00-00-0000 00:00:00
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    0
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="completion mr-2">connect to 000.000.000.000</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Card footer -->
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-end mb-0">
+                
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+<script>
+  $(document).ready(function() {
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      socket.on('new_data', function(data) {
+        var tableBody = $('.list');
+        data = JSON.parse(data);
+        data.forEach(function(row) {
+              // Tạo dòng mới với dữ liệu nhận được
+              var newRow = `
+                <tr>
+                  <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">
+                    ${row.IP}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    ${row.MAC}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    ${row.TIME_RECEIVE}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                   ${row.ALERT_LEVEL_ID}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="completion mr-2">${row.DESCRIPTION}</span>
+                    </div>
+                  </td>
+                </tr>`;
+              tableBody.append(newRow);
+          });
+      });
+  });
+</script>
+{% endblock javascripts %}
+
+
