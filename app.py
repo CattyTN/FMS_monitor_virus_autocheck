@@ -52,7 +52,9 @@ def get_users():
 @login_required
 def virus_check():
     black_list = get_list(black_list_path)
-    return render_template('virus_check.html', black_list_new = black_list.to_string(index=False, header=False))
+    white_list = get_list(white_list_path)
+
+    return render_template('virus_check.html', black_list_new = black_list.to_string(index=False, header=False),white_list_new = white_list.to_string(index=False, header=False))
 
 @app.route('/tables', methods=['GET', 'POST'])
 @login_required
