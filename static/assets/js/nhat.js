@@ -227,6 +227,7 @@ window.addEventListener('load', function(){
     });
 });
 
+
 function upload_file_to_check_virus(fileInput){
     var selected_file = fileInput.files[0];
     if (!selected_file) {
@@ -234,31 +235,77 @@ function upload_file_to_check_virus(fileInput){
             title: "Chưa chọn file!",
             text: "Hãy chọn file ip cần check!",
             icon: "warning"
-          });
+        });
         return;
     }
 
-    var full_file_name = selected_file.name.toString();
+    // Sử dụng FileReader để đọc nội dung file
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var fileContent = e.target.result;
+        var ipArray = fileContent.split(/\r?\n/).filter(Boolean); 
 
-    // Tạo một hidden input để chứa tên file
-    var hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'a';  // Tên field mà bạn sẽ sử dụng trong Flask để lấy dữ liệu
-    hiddenInput.value = full_file_name;
+        var ipArrayJSON = JSON.stringify(ipArray);
 
-    // Tạo form để chứa hidden input và gửi dữ liệu
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/ip_upload';
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'ip_list';  
+        hiddenInput.value = ipArrayJSON;
 
-    // Thêm hidden input vào form
-    form.appendChild(hiddenInput);
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/ip_upload_2';
 
-    // Thêm form vào body và tự động submit
-    document.body.appendChild(form);
-    form.submit();
+        // Thêm hidden input vào form
+        form.appendChild(hiddenInput);
+
+        // Thêm form vào body và tự động submit
+        document.body.appendChild(form);
+        form.submit();
+
+        // Xóa form sau khi submit để tránh tạo nhiều form không cần thiết
+        document.body.removeChild(form);
+    };
+
+    // Đọc file dưới dạng text
+    reader.readAsText(selected_file);
 }
 
+/*
+function upload_file_to_check_virus(fileInput){
+    var selected_file = fileInput.files[0];
+    if (!selected_file) {
+        Swal.fire({
+            title: "Chưa chọn file!",
+            text: "Hãy chọn file ip cần check!",
+            icon: "warning"
+        });
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var fileContent = e.target.result;
+        var ipArray = fileContent.split(/\r?\n/).filter(Boolean); 
+        console.log(ipArray);
+        sendDataToBackend(ipArray);
+    };
+
+    // Đọc file dưới dạng text
+    reader.readAsText(selected_file);
+}
+
+function sendDataToBackend(ipArray) {
+    // Sử dụng fetch để gửi mảng địa chỉ IP qua backend
+    fetch('/ip_upload_2', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ip_list: ipArray }), // Gửi dưới dạng JSON
+    });
+}
+*/
 
 /*
 function upload_file_to_check_virus(){

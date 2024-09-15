@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash
 from flask import jsonify
 import pandas as pd
 import time
+import json
 from datetime import datetime, timedelta
 import hashlib
 import requests
@@ -78,7 +79,25 @@ def ip_upload():
     append_data_to_excel(black_list_new, white_list_new)
     #, df_malicious = df_malicious, df_normal = df_normal, black_list_new = black_list_new
     print(df_malicious)
+    return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False))
+
+@app.route('/ip_upload_2', methods=['GET', 'POST'])
+@login_required
+def ip_upload_2():
+    ip_list_json = request.form.get('ip_list', None)
+    ip_list = json.loads(ip_list_json)
+    df_ip = pd.DataFrame(ip_list, columns=['ip'])
+    df_malicious, df_normal = check_2(df_ip)
+
+    black_list = get_list(black_list_path)
+    white_list = get_list(white_list_path)
+
+    black_list_new = pd.concat([black_list, df_malicious], ignore_index=True)
+    white_list_new = pd.concat([white_list, df_normal], ignore_index=True)
+
+    append_data_to_excel(black_list_new, white_list_new)
     return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False))
+
 
 def get_user(file_path):
 	df = pd.read_excel(file_path)
@@ -87,6 +106,15 @@ def get_user(file_path):
 
 def check(file_name):
     new_ip_list = get_unique_ip_list(file_name)
+    api_key = '991b2155df7d9dc2dad646878f5ba4892163d9ccf6b573c68d5afedbcf8f00be'
+    df_to_check = pd.DataFrame(new_ip_list, columns=['ip'])
+    df_result = auto_check_virus_total(df_to_check, api_key)
+    df_malicious = df_result[df_result['check_result'] != 0]
+    df_normal = df_result[df_result['check_result'] == 0]
+    return pd.DataFrame(df_malicious['ip']), pd.DataFrame(df_normal['ip'])
+
+def check_2(df):
+    new_ip_list = get_unique_ip_list_2(df)
     api_key = '991b2155df7d9dc2dad646878f5ba4892163d9ccf6b573c68d5afedbcf8f00be'
     df_to_check = pd.DataFrame(new_ip_list, columns=['ip'])
     df_result = auto_check_virus_total(df_to_check, api_key)
@@ -119,6 +147,13 @@ def check_virus_total(item, api_key):
 
 def get_unique_ip_list(file_name):
     ip_list = get_list(file_name)
+    ip_list = ip_list['ip'].tolist()
+    black_list = get_list(black_list_path)
+    white_list = get_list(white_list_path)
+    new_ip_list = [ip for ip in ip_list if ip not in black_list and ip not in white_list]
+    return new_ip_list
+
+def get_unique_ip_list_2(ip_list):
     ip_list = ip_list['ip'].tolist()
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
