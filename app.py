@@ -3,6 +3,7 @@ from flask import jsonify
 import pandas as pd
 import time
 from datetime import datetime, timedelta
+import hashlib
 import requests
 import threading
 from flask import redirect, url_for, Response, stream_with_context
@@ -35,20 +36,17 @@ def get_list(file_path):
 def default():
     return render_template('/sign-in.html')
 
+def convert_df_to_dict(df):
+    users = {}
+    for _, row in df.iterrows():
+        users[row['username']] = {'password': row['password']}
+    return users
 
-@app.route('/sign_in', methods=['GET', 'POST'])
-def sign_in():
-    check = '0'
-    email = request.form.get('email') 
-    password = request.form.get('password') 
+def get_users():
     df = pd.read_excel(user_path)
-    for _,row in df.iterrows():
-        a= row
-        if a['username'] == email and a['password'] == password:
-            check = '1'
-    global is_login
-    is_login = True
-    return check
+    return df
+    
+
 
 @app.route('/virus_check', methods=['GET', 'POST'])
 @login_required
@@ -80,7 +78,10 @@ def ip_upload():
     print(df_malicious)
     return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False))
 
-        
+def get_user(file_path):
+	df = pd.read_excel(file_path)
+	df.columns = ['user']
+	return df   
 
 def check(file_name):
     new_ip_list = get_unique_ip_list(file_name)
@@ -266,8 +267,9 @@ class User(UserMixin):
     def __init__(self, id):
         self.id = id
 
+users = convert_df_to_dict(get_users())
 
-users = {'a': {'password': 'a'}}
+#users = {'a': {'password': 'a'}}
 @login_manager.user_loader
 def load_user(user_id):
     if user_id in users:
@@ -277,7 +279,11 @@ def load_user(user_id):
 def login():
     email = request.form.get('email')
     password = request.form.get('password')
-    if email in users and users[email]['password'] == password:
+
+    hash_hex = hashlib.sha256(password.encode()).hexdigest()
+
+
+    if email in users and users[email]['password'] == hash_hex:
         user = User(email)
         login_user(user)
         return jsonify({'status': 'success', 'message': 'Đăng nhập thành công'})
