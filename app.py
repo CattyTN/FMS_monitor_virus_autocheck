@@ -24,9 +24,9 @@ login_manager.login_view = 'login'
 
 
 loop_active = False
-user_path = "F:\\86\\FMS\\FMS\\user.xlsx"
-black_list_path = "F:\\86\\FMS\\FMS\\black_list.xlsx" 
-white_list_path= "F:\\86\\FMS\\FMS\\white_list.xlsx"
+user_path = "user.xlsx"
+black_list_path = "black_list.xlsx" 
+white_list_path= "white_list.xlsx"
 
 is_login = False
 
@@ -54,8 +54,12 @@ def get_users():
 def virus_check():
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
+    df_normal = pd.DataFrame()
+    df_malicious = pd.DataFrame()
+    a = df_normal.shape[0]
+    b = df_malicious.shape[0]
 
-    return render_template('virus_check.html', black_list_new = black_list.to_string(index=False, header=False),white_list_new = white_list.to_string(index=False, header=False))
+    return render_template('virus_check.html', black_list_new = black_list.to_string(index=False, header=False),white_list_new = white_list.to_string(index=False, header=False),df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), a=a, b=b)
 
 @app.route('/tables', methods=['GET', 'POST'])
 @login_required
@@ -70,6 +74,9 @@ def ip_upload():
     file_name = request.form.get('a')
     df_malicious, df_normal = check(file_name)
 
+    a = df_normal.shape[0]
+    b = df_malicious.shape[0]
+    
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
 
@@ -79,7 +86,7 @@ def ip_upload():
     append_data_to_excel(black_list_new, white_list_new)
     #, df_malicious = df_malicious, df_normal = df_normal, black_list_new = black_list_new
     print(df_malicious)
-    return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False))
+    return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False),a=a, b=b)
 
 @app.route('/ip_upload_2', methods=['GET', 'POST'])
 @login_required
@@ -89,6 +96,9 @@ def ip_upload_2():
     df_ip = pd.DataFrame(ip_list, columns=['ip'])
     df_malicious, df_normal = check_2(df_ip)
 
+    a = df_normal.shape[0]
+    b = df_malicious.shape[0]
+
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
 
@@ -96,7 +106,7 @@ def ip_upload_2():
     white_list_new = pd.concat([white_list, df_normal], ignore_index=True)
 
     append_data_to_excel(black_list_new, white_list_new)
-    return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False))
+    return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False),a=a, b=b)
 
 
 def get_user(file_path):
@@ -243,7 +253,7 @@ def core():
         #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
         #df = raw_to_df(result1)
         #df = pd.DataFrame(df)
-        df = pd.read_excel(r'F:\\86\\FMS\\FMS\\2024-08-19-2024-08-20-records.xlsx')
+        df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')
         database = get_database(database_path)
         rule = database['ip'].tolist()
         df_filtered = filtering(df, rule)

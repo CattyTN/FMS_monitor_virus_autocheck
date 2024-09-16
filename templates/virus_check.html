@@ -34,16 +34,20 @@
 
         <div class="row mt-3">
           <div class="col-lg-3 mb-lg-0 mb-4">
-            <div class="card z-index-2 h-100">
-              <div class="card-header pb-0 pt-3 bg-transparent">
-                <h6 class="text-capitalize" style="color: green;text-align: center; vertical-align: middle;">White_ip</h6>
+              <div class="card z-index-2 h-100">
+                  <div class="card-header pb-0 pt-3 bg-transparent">
+                      <h6 class="text-capitalize" style="color: green;text-align: center; vertical-align: middle;">White_ip</h6>
+                  </div>
+                  <div class="card-body">
+                      <div class="card">
+                          {% if a != 0 %}
+                          <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green; font-size: 20px; text-align: center; padding-left: 0; line-height: 1.2;">{{ df_normal }}</textarea>
+                          {% else %}
+                          <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green; font-size: 20px; text-align: center; padding-left: 0; line-height: 1.2;"></textarea>
+                          {% endif %}
+                      </div>
+                  </div>
               </div>
-              <div class="card-body">
-                <div class="card">
-                  <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green;font-size: 20px;text-align: center; padding-left: 0;line-height:1.2;">{{ df_normal }}</textarea>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div class="col-lg-3 mb-lg-0 mb-4">
@@ -61,15 +65,22 @@
   
           <div class="col-lg-3 mb-lg-0 mb-4">
             <div class="card z-index-2 h-100">
-              <div class="card-header pb-0 pt-3 bg-transparent">
-                <h6 class="text-capitalize" style="color: red;text-align: center; vertical-align: middle;">Black_ip</h6>
-              </div>
-              <div class="card-body">
-                <div class="card">
-                  <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: red;font-size: 20px; text-align: center; padding-left: 0;vertical-align: middle;line-height:1.2;">{{ df_malicious }}</textarea></div>
-              </div>
+                <div class="card-header pb-0 pt-3 bg-transparent">
+                    <h6 class="text-capitalize" style="color: green;text-align: center; vertical-align: middle;">Black_ip</h6>
+                </div>
+                <div class="card-body">
+                    <div class="card">
+                        {% if b != 0 %}
+                        <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green; font-size: 20px; text-align: center; padding-left: 0; line-height: 1.2;">{{ df_malicious }}</textarea>
+                        {% else %}
+                        <textarea id="blacklist-textbox" class="form-control" rows="10" style="height: 500px; color: green; font-size: 20px; text-align: center; padding-left: 0; line-height: 1.2;"></textarea>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
           </div>
+
+
           <div class="col-lg-3 mb-lg-0 mb-4">
             <div class="card z-index-2 h-100">
               <div class="card-header pb-0 pt-3 bg-transparent">
