@@ -109,6 +109,33 @@ def ip_upload_2():
     return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False),a=a, b=b)
 
 
+@app.route('/update_list', methods=['GET', 'POST'])
+@login_required
+def update_list():
+    list_type = request.form.get('listType')   # Nhận giá trị listType ('black' hoặc 'white')
+    list_index = int(request.form.get('listIndex'))  # Nhận chỉ số listIndex (0 hoặc 1)
+    ip_array_json = request.form.get('ips')    # Nhận chuỗi JSON chứa mảng IP
+    
+    ip_array = pd.read_json(ip_array_json).values.flatten().tolist()
+
+    df = pd.DataFrame(ip_array, columns=['ip'])
+    black_list = get_database(black_list_path)
+    white_list = get_database(white_list_path)
+    print(df)
+    print(black_list)
+    if list_index == 0:
+        black_list = pd.concat([black_list, df], ignore_index=True)
+        black_list = black_list.drop_duplicates(subset=['ip'], keep='first', ignore_index=True)
+    if list_index == 1:
+        white_list = pd.concat([white_list, df], ignore_index=True)
+        white_list = white_list.drop_duplicates(subset=['ip'], keep='first', ignore_index=True)
+    append_data_to_excel(black_list, white_list)       
+    return redirect(url_for('virus_check'))
+
+    
+    
+
+
 def get_user(file_path):
 	df = pd.read_excel(file_path)
 	df.columns = ['user']
@@ -306,6 +333,9 @@ def end():
     global loop_active
     loop_active = False 
     return render_template('tables.html')
+
+
+
 
 
 

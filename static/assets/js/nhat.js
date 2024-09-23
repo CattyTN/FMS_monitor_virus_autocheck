@@ -123,44 +123,47 @@ window.addEventListener('load', function(){
 
 function upload_file_to_flows(){
     var e = document.getElementById("upload_file")
-    e.addEventListener('change', function (){
-        var selected_file = e.files[0]
-        var full_file_name = selected_file.name.toString()
-        $.ajax({
-            type: 'POST',
-            url: '/upload_file_to_flows',
-            data: {
-                a: full_file_name
-            },
-            success: function(response) {
-                if(response.toString() == "1"){
-                    Swal.fire({
-                        title: 'Thành công!!',
-                        text: "Upload flow dữ liệu thành công!",
-                        icon: 'success',
-                        showCancelButton: false,
-                        confirmButtonText: 'OK!',
-                        reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/tables'
-                            } 
-                          })
+    if(e){
+        e.addEventListener('change', function (){
+            var selected_file = e.files[0]
+            var full_file_name = selected_file.name.toString()
+            $.ajax({
+                type: 'POST',
+                url: '/upload_file_to_flows',
+                data: {
+                    a: full_file_name
+                },
+                success: function(response) {
+                    if(response.toString() == "1"){
+                        Swal.fire({
+                            title: 'Thành công!!',
+                            text: "Upload flow dữ liệu thành công!",
+                            icon: 'success',
+                            showCancelButton: false,
+                            confirmButtonText: 'OK!',
+                            reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/tables'
+                                } 
+                              })
+                    }
+                    else{
+                        Swal.fire(
+                            'Không thành công!',
+                            'Flow đã tồn tại!',
+                            'warning'
+                          );
+                    }
+    
+                },
+                error: function(error) {
+                    console.log("error");
                 }
-                else{
-                    Swal.fire(
-                        'Không thành công!',
-                        'Flow đã tồn tại!',
-                        'warning'
-                      );
-                }
-
-            },
-            error: function(error) {
-                console.log("error");
-            }
-        }); 
-    })
+            }); 
+        })
+    }
+    
 }
 
 window.addEventListener('load', function(){
@@ -169,23 +172,26 @@ window.addEventListener('load', function(){
 
 function capture_button_listen(){
     var e = document.getElementById("captureButton")
-    e.addEventListener('click', function(){
-        var selectElement = document.getElementById("inputGroupSelect01");
-        var selectedValue = selectElement.value;
-        $.ajax({
-            type: 'POST',
-            url: '/capture_extract',
-            data: {
-                interface_name: selectedValue
-            },
-            success: function(response) {
+    if (e){
+        e.addEventListener('click', function(){
+            var selectElement = document.getElementById("inputGroupSelect01");
+            var selectedValue = selectElement.value;
+            $.ajax({
+                type: 'POST',
+                url: '/capture_extract',
+                data: {
+                    interface_name: selectedValue
+                },
+                success: function(response) {
+    
+                },
+                error: function(error) {
+                    console.log("error");
+                }
+            }); 
+        })
+    }
 
-            },
-            error: function(error) {
-                console.log("error");
-            }
-        }); 
-    })
 }
 /*
 window.addEventListener('load', function(){
@@ -221,10 +227,11 @@ function upload_file_to_check_virus(){
 window.addEventListener('load', function(){
     var fileInput = document.getElementById("virus_check_file");
     var uploadButton = document.getElementById("ioc_button");
-
-    uploadButton.addEventListener('click', function(){
-        upload_file_to_check_virus(fileInput);
-    });
+    if (uploadButton){
+        uploadButton.addEventListener('click', function(){
+            upload_file_to_check_virus(fileInput);
+        });
+    }
 });
 
 
@@ -337,7 +344,8 @@ window.addEventListener('load', function(){
 
 function end_button_click(){
     var e = document.getElementById("end_button")
-    e.addEventListener('click', function (){
+    if (e){
+       e.addEventListener('click', function (){
         $.ajax({
             type: 'POST',
             url: '/end',
@@ -355,7 +363,8 @@ function end_button_click(){
                 console.log("error");
             }
         }); 
-    })
+    })     
+    }
 }
 
 window.addEventListener('load', function(){
@@ -364,37 +373,39 @@ window.addEventListener('load', function(){
 
 function start_button_click(){
     var e = document.getElementById("start_button")
-    e.addEventListener('click', function (){
-        $.ajax({
-            type: 'POST',
-            url: '/start',
-            data: {
-                interface_name: "a"
-            },
-            success: function(response) {
-                console.log(response)
-                if (response == '1'){
-                    Swal.fire({
-                        title: "Bắt đầu!",
-                        text: "Bắt đầu hoạt động giám sát!",
-                        icon: "success"
-                      });
+    if(e){
+        e.addEventListener('click', function (){
+            $.ajax({
+                type: 'POST',
+                url: '/start',
+                data: {
+                    interface_name: "a"
+                },
+                success: function(response) {
+                    console.log(response)
+                    if (response == '1'){
+                        Swal.fire({
+                            title: "Bắt đầu!",
+                            text: "Bắt đầu hoạt động giám sát!",
+                            icon: "success"
+                          });
+                    }
+                    else{
+                        Swal.fire({
+                            title: "Lỗi!",
+                            text: "Hệ thống đang thực hiện giám sát!",
+                            icon: "error"
+                          });
+                    }
+    
+                        
+                },
+                error: function(error) {
+                    console.log("error");
                 }
-                else{
-                    Swal.fire({
-                        title: "Lỗi!",
-                        text: "Hệ thống đang thực hiện giám sát!",
-                        icon: "error"
-                      });
-                }
-
-                    
-            },
-            error: function(error) {
-                console.log("error");
-            }
-        }); 
-    })
+            }); 
+        })
+    }
 }
 
 
@@ -405,85 +416,90 @@ window.addEventListener('load', function(){
 
 function sign_in_button_listener_2() {
     var e = document.getElementById("sign_in_button");
-    e.addEventListener('click', function () {
-        const email = document.querySelector('input[aria-label="Email"]').value;
-        const password = document.querySelector('input[aria-label="Password"]').value;
-        if (email === "" || password === "") {
-            Swal.fire({
-                title: "Nhập thông tin!",
-                text: "Nhập đầy đủ thông tin đăng nhập!",
-                icon: "warning" 
-            });
-        } else {
-            $.ajax({
-                type: 'POST',
-                url: '/sign_in',
-                data: {
-                    email: email,
-                    password: password
-                },
-                success: function (response) {
-                    if (response == '0'){
-                        Swal.fire({
-                            title: "Đăng nhập thất bại!",
-                            text: "Thông tin đăng nhập không chính xác!",
-                            icon: "warning"
-                        });
-                    } else{
-                        window.location.href = '/virus_check'
+    if (e){
+        e.addEventListener('click', function () {
+            const email = document.querySelector('input[aria-label="Email"]').value;
+            const password = document.querySelector('input[aria-label="Password"]').value;
+            if (email === "" || password === "") {
+                Swal.fire({
+                    title: "Nhập thông tin!",
+                    text: "Nhập đầy đủ thông tin đăng nhập!",
+                    icon: "warning" 
+                });
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/sign_in',
+                    data: {
+                        email: email,
+                        password: password
+                    },
+                    success: function (response) {
+                        if (response == '0'){
+                            Swal.fire({
+                                title: "Đăng nhập thất bại!",
+                                text: "Thông tin đăng nhập không chính xác!",
+                                icon: "warning"
+                            });
+                        } else{
+                            window.location.href = '/virus_check'
+                        }
+    
+    
+                    },
+                    error: function (error) {
+                        console.log("error");
                     }
-
-
-                },
-                error: function (error) {
-                    console.log("error");
-                }
-            });
-        }
-    });
+                });
+            }
+        });
+    }
 }
 
 
 function sign_in_button_listener_3(){
-    document.getElementById('sign_in_button').addEventListener('click', function () {
-        const email = document.querySelector('input[aria-label="Email"]').value;
-        const password = document.querySelector('input[aria-label="Password"]').value;
-
-        if (email === "" || password === "") {
-            Swal.fire({
-                title: "Nhập thông tin!",
-                text: "Hãy nhập đầy đủ email và mật khẩu",
-                icon: "warning"
-            });
-            return;
-        }
-        fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `email=${email}&password=${password}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
+    var e = document.getElementById('sign_in_button')
+    if (e){
+        e.addEventListener('click', function () {
+            const email = document.querySelector('input[aria-label="Email"]').value;
+            const password = document.querySelector('input[aria-label="Password"]').value;
+    
+            if (email === "" || password === "") {
                 Swal.fire({
-                    title: "Thành công!",
-                    text: data.message,
-                    icon: "success"
-                }).then(() => {
-                    window.location.href = "/virus_check";  // Chuyển hướng đến trang được bảo vệ
+                    title: "Nhập thông tin!",
+                    text: "Hãy nhập đầy đủ email và mật khẩu",
+                    icon: "warning"
                 });
-            } else {
-                Swal.fire({
-                    title: "Lỗi!",
-                    text: data.message,
-                    icon: "error"
-                });
+                return;
             }
-        })
-        .catch(error => console.log('Error:', error));
-    });
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `email=${email}&password=${password}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: "Thành công!",
+                        text: data.message,
+                        icon: "success"
+                    }).then(() => {
+                        window.location.href = "/virus_check";  // Chuyển hướng đến trang được bảo vệ
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Lỗi!",
+                        text: data.message,
+                        icon: "error"
+                    });
+                }
+            })
+            .catch(error => console.log('Error:', error));
+        });
+    }
 }
 
 
@@ -492,7 +508,9 @@ window.addEventListener('load', function(){
 })
 
 function logout_listener(){
-    document.getElementById('logout_button').addEventListener('click', function () {
+    var e = document.getElementById('logout_button')
+    if (e){
+        e.addEventListener('click', function () {
         fetch('/logout', {
             method: 'POST'
         })
@@ -516,4 +534,77 @@ function logout_listener(){
         })
         .catch(error => console.log('Error:', error));
     });
+    }
+
+}
+
+
+window.addEventListener('load', function(){
+    update_button()
+})
+
+
+function update_button() {
+
+    var e = document.getElementById("update_button");
+    e.addEventListener('click', function () {
+        // Lấy nội dung từ textarea
+        var textareaContent = document.getElementById('blacklist-textbox-update').value;
+        console.log('Nhật')
+        console.log(textareaContent)
+        // Chuyển nội dung thành mảng, mỗi dòng là một phần tử
+        var ipArray = textareaContent.split('\n').map(ip => ip.trim()).filter(ip => ip !== '');
+    
+        // Kiểm tra nếu textarea trống
+        if (ipArray.length === 0) {
+            Swal.fire({
+            title: "Chưa nhập IP!",
+            text: "Hãy nhập danh sách IP cần cập nhật!",
+            icon: "warning"
+            });
+            return;
+        }
+    
+        // Chuyển mảng IP thành JSON string
+        var ipArrayJSON = JSON.stringify(ipArray);
+    
+        // Lấy giá trị và chỉ số của select box
+        var selectBox = document.getElementById('color-select');
+        var selectedList = selectBox.value;
+        var selectedIndex = selectBox.selectedIndex;
+    
+        // Tạo các input ẩn để chứa dữ liệu
+        var listTypeInput = document.createElement('input');
+        listTypeInput.type = 'hidden';
+        listTypeInput.name = 'listType';
+        listTypeInput.value = selectedList;
+    
+        var listIndexInput = document.createElement('input');
+        listIndexInput.type = 'hidden';
+        listIndexInput.name = 'listIndex';
+        listIndexInput.value = selectedIndex;
+    
+        var ipListInput = document.createElement('input');
+        ipListInput.type = 'hidden';
+        ipListInput.name = 'ips';
+        ipListInput.value = ipArrayJSON;
+    
+        // Tạo form và thêm các input ẩn vào
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/update_list';
+    
+        form.appendChild(listTypeInput);
+        form.appendChild(listIndexInput);
+        form.appendChild(ipListInput);
+    
+        // Thêm form vào body và tự động submit
+        document.body.appendChild(form);
+        form.submit();
+    
+        // Xóa form sau khi submit để tránh tạo nhiều form không cần thiết
+        document.body.removeChild(form);
+         
+    });
+    
 }

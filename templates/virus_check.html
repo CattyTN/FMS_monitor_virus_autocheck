@@ -24,6 +24,7 @@
                   </div>
                   <div class="col-4">
                     <a href="#" id ="ioc_button" class="btn btn-sm btn-neutral" style = "background-color: #63B3ED; color: white;">CHECK</a>
+                    <button type="button" class="btn btn-sm btn-neutral" style = "background-color: #63B3ED; color: white;" data-toggle="modal" data-target="#customModal" data-whatever="@custom">Cập nhật Black/White list</button>
                   </div>
                 </div>
               </div>
@@ -94,9 +95,40 @@
             </div>
           </div>
         </div>
-  
+        
 
 
+        <div class="modal fade" id="customModal" tabindex="-1" role="dialog" aria-labelledby="customModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="customModalLabel">Cập nhật Black/White list</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span >&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="color-select" class="col-form-label">Chọn danh sách muốn cập nhật</label>
+                    <select class="form-control" id="color-select">
+                      <option value="black">Black_list</option>
+                      <option value="white">White_list</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="input-value" class="col-form-label">Danh sách IP bổ sung</label>
+                    <textarea id="blacklist-textbox-update" class="form-control" rows="10" ></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" id ='update_button' class="btn btn-primary">Cập nhật</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
 
 {% endblock content %}
@@ -106,5 +138,8 @@
 
   <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
   <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+  <script>
+    
+  </script>
 
 {% endblock javascripts %}
