@@ -66,6 +66,11 @@ def virus_check():
 def tables():
     return render_template('tables.html')
 
+@app.route('/index', methods=['GET', 'POST'])
+@login_required
+def index():
+    return render_template('index.html')
+
 
 @app.route('/ip_upload', methods=['GET', 'POST'])
 @login_required
