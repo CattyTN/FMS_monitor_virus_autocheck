@@ -442,7 +442,7 @@ function sign_in_button_listener_2() {
                                 icon: "warning"
                             });
                         } else{
-                            window.location.href = '/virus_check'
+                            window.location.href = '/index'
                         }
     
     
@@ -487,7 +487,7 @@ function sign_in_button_listener_3(){
                         text: data.message,
                         icon: "success"
                     }).then(() => {
-                        window.location.href = "/virus_check";  // Chuyển hướng đến trang được bảo vệ
+                        window.location.href = "/index";  // Chuyển hướng đến trang được bảo vệ
                     });
                 } else {
                     Swal.fire({

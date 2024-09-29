@@ -25,8 +25,11 @@ login_manager.login_view = 'login'
 
 loop_active = False
 user_path = "user.xlsx"
-black_list_path = "black_list.xlsx" 
+black_list_path = "black_list.xlsx"
 white_list_path= "white_list.xlsx"
+chart_path = "chart.xlsx"
+other_parameter_path = "parameter.xlsx"
+
 
 is_login = False
 
@@ -69,7 +72,9 @@ def tables():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html')
+    df_1, df_2 = get_dashboard_parameter()
+    df_1_json = df_1.to_dict(orient='records')
+    return render_template('index.html',df_1_json=df_1_json, df_2 = df_2)
 
 
 @app.route('/ip_upload', methods=['GET', 'POST'])
@@ -114,12 +119,18 @@ def ip_upload_2():
     return render_template('virus_check.html', df_malicious = df_malicious.to_string(index=False, header=False), df_normal = df_normal.to_string(index=False, header=False), black_list_new = black_list_new.to_string(index=False, header=False),white_list_new = white_list_new.to_string(index=False, header=False),a=a, b=b)
 
 
+def get_dashboard_parameter():
+    df_1 = pd.read_excel(chart_path)
+    df_1 = df_1.head(6)
+    df_2 = pd.read_excel(other_parameter_path)
+    return df_1, df_2
+
 @app.route('/update_list', methods=['GET', 'POST'])
 @login_required
 def update_list():
-    list_type = request.form.get('listType')   # Nhận giá trị listType ('black' hoặc 'white')
-    list_index = int(request.form.get('listIndex'))  # Nhận chỉ số listIndex (0 hoặc 1)
-    ip_array_json = request.form.get('ips')    # Nhận chuỗi JSON chứa mảng IP
+    list_type = request.form.get('listType')   
+    list_index = int(request.form.get('listIndex'))  
+    ip_array_json = request.form.get('ips')    
     
     ip_array = pd.read_json(ip_array_json).values.flatten().tolist()
 
@@ -138,7 +149,25 @@ def update_list():
     return redirect(url_for('virus_check'))
 
     
-    
+def update_chart_parameter(df_new):
+    df = pd.read_excel(chart_path)
+    for index, row in df_new.iterrows():
+        ip = row['IP']
+        if ip in df['ip'].values:
+            df.loc[df['ip'] == ip, 'count'] += 1
+        else:
+            df = pd.concat([df, pd.DataFrame([[ip, 1]], columns=['ip', 'count'])], ignore_index=True)
+    df = df.sort_values(by='count', ascending=False)
+    df.to_excel(chart_path, index=False)
+
+
+def update_other_parameter(a, b):
+    df = pd.read_excel(other_parameter_path)
+    if b in df.columns:
+        df.at[0, b] += a
+    else:
+        print(f"Cột '{b}' không tồn tại trong DataFrame.")
+    df.to_excel(other_parameter_path, index=False)
 
 
 def get_user(file_path):
@@ -200,6 +229,7 @@ def get_unique_ip_list_2(ip_list):
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
     new_ip_list = [ip for ip in ip_list if ip not in black_list and ip not in white_list]
+    update_other_parameter(len(new_ip_list), 'ioc_check')
     return new_ip_list
 
 
@@ -219,6 +249,7 @@ def append_data_to_excel(black_list, white_list):
 def get_database(file_path):
 	df = pd.read_excel(file_path)
 	df.columns = ['ip']
+     
 	return df
 
 def filtering(df, list):
@@ -285,18 +316,19 @@ def core():
         #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
         #df = raw_to_df(result1)
         #df = pd.DataFrame(df)
-        df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')
+        df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')   
         database = get_database(database_path)
         rule = database['ip'].tolist()
         df_filtered = filtering(df, rule)
-
+        update_other_parameter(len(df), 'query')
+        update_chart_parameter(df_filtered)
         count = len(df_filtered)
+        update_other_parameter(count, 'detect')
         print(f"There are {count} alert for 300s from {before_start} to {start_time}")
         a = a + 1
-
         end_time = datetime.now()
         elapsed_time = end_time - start_time
-        sleep_time =  max(0, (timedelta(seconds=300) - elapsed_time).total_seconds())
+        sleep_time =  max(0, (timedelta(seconds=5) - elapsed_time).total_seconds())
         time.sleep(sleep_time)
         data = df_filtered.to_json(orient='records')
         if loop_active:
@@ -387,3 +419,4 @@ def protected():
 #    socketio.run(app, debug=True)
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    #get_dashboard_parameter()
