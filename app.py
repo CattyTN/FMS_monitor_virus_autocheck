@@ -313,10 +313,10 @@ def core():
         before_start = start_time - timedelta(minutes=5)
 
         filter,name = get_filter(before_start.strftime("%Y-%m-%d %H:%M:%S"), start_time.strftime("%Y-%m-%d %H:%M:%S"))
-        #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
-        #df = raw_to_df(result1)
-        #df = pd.DataFrame(df)
-        df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')   
+        result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
+        df = raw_to_df(result1)
+        df = pd.DataFrame(df)
+        #df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')   
         database = get_database(database_path)
         rule = database['ip'].tolist()
         df_filtered = filtering(df, rule)
@@ -328,7 +328,7 @@ def core():
         a = a + 1
         end_time = datetime.now()
         elapsed_time = end_time - start_time
-        sleep_time =  max(0, (timedelta(seconds=5) - elapsed_time).total_seconds())
+        sleep_time =  max(0, (timedelta(seconds=300) - elapsed_time).total_seconds())
         time.sleep(sleep_time)
         data = df_filtered.to_json(orient='records')
         if loop_active:
