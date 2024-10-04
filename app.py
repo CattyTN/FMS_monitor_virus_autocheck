@@ -229,7 +229,7 @@ def get_unique_ip_list_2(ip_list):
     black_list = get_list(black_list_path)
     white_list = get_list(white_list_path)
     new_ip_list = [ip for ip in ip_list if ip not in black_list and ip not in white_list]
-    update_other_parameter(len(new_ip_list), 'ioc_check')
+    update_other_parameter(len(new_ip_list), 'ioc_db')
     return new_ip_list
 
 
