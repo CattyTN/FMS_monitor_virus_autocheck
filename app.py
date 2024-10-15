@@ -325,6 +325,8 @@ def core():
         count = len(df_filtered)
         update_other_parameter(count, 'detect')
         print(f"There are {count} alert for 300s from {before_start} to {start_time}")
+        if len(df_filtered) > 0:
+            print(df_filtered)
         a = a + 1
         end_time = datetime.now()
         elapsed_time = end_time - start_time
