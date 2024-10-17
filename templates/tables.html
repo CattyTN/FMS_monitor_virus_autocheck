@@ -42,6 +42,7 @@
                 </tr>
               </thead>
               <tbody class="list">
+                {% if a == 0%}
                 <tr>
                   <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">
                     000.000.000.000
@@ -61,6 +62,21 @@
                     </div>
                   </td>
                 </tr>
+                {%else%}
+                {% for index, row in df_1.iterrows() %}
+                <tr>
+                  <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">{{ row['IP'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['MAC'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['TIME_RECEIVE'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['ALERT_LEVEL_ID'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="completion mr-2">{{ row['DESCRIPTION'] }}</span>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+                {%endif%}
               </tbody>
             </table>
           </div>

@@ -29,7 +29,7 @@ black_list_path = "black_list.xlsx"
 white_list_path= "white_list.xlsx"
 chart_path = "chart.xlsx"
 other_parameter_path = "parameter.xlsx"
-
+ram_path = 'ram.xlsx'
 
 is_login = False
 
@@ -67,7 +67,9 @@ def virus_check():
 @app.route('/tables', methods=['GET', 'POST'])
 @login_required
 def tables():
-    return render_template('tables.html')
+    df_1 = pd.read_excel(ram_path)
+    a = len(df_1)
+    return render_template('tables.html', df_1 = df_1, a=a)
 
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -313,10 +315,10 @@ def core():
         before_start = start_time - timedelta(minutes=5)
 
         filter,name = get_filter(before_start.strftime("%Y-%m-%d %H:%M:%S"), start_time.strftime("%Y-%m-%d %H:%M:%S"))
-        result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
-        df = raw_to_df(result1)
-        df = pd.DataFrame(df)
-        #df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')   
+        #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
+        #df = raw_to_df(result1)
+        #df = pd.DataFrame(df)
+        df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')   
         database = get_database(database_path)
         rule = database['ip'].tolist()
         df_filtered = filtering(df, rule)
@@ -327,10 +329,11 @@ def core():
         print(f"There are {count} alert for 300s from {before_start} to {start_time}")
         if len(df_filtered) > 0:
             print(df_filtered)
+            append_record_to_ram(ram_path, df_filtered)
         a = a + 1
         end_time = datetime.now()
         elapsed_time = end_time - start_time
-        sleep_time =  max(0, (timedelta(seconds=300) - elapsed_time).total_seconds())
+        sleep_time =  max(0, (timedelta(seconds=5) - elapsed_time).total_seconds())
         time.sleep(sleep_time)
         data = df_filtered.to_json(orient='records')
         if loop_active:
@@ -339,6 +342,7 @@ def core():
 @app.route('/start', methods=['GET', 'POST'])
 @login_required
 def start():
+    reset_ram()
     global loop_active
     if not loop_active:
         loop_active = True
@@ -371,12 +375,20 @@ def end():
     print("vào end")
     global loop_active
     loop_active = False 
-    return render_template('tables.html')
+    return redirect(url_for('tables'))
 
 
 
-
-
+def append_record_to_ram(path, df_filtered):
+    df_1 = pd.read_excel(path)
+    df_1 = pd.concat([df_1, df_filtered], ignore_index=True)
+    df_1.to_excel(path, index=False)
+    return 0
+def reset_ram():
+    df = pd.read_excel(ram_path)  
+    empty_df = pd.DataFrame(columns=df.columns)
+    empty_df.to_excel(ram_path, index=False)
+    return 0
 
 # đây là cho login
 class User(UserMixin):
