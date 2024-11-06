@@ -37,7 +37,7 @@
                   <th scope="col" class="sort align-items-center" data-sort="name" style="text-align: center;">IP</th>
                   <th scope="col" class="sort" data-sort="budget" style="text-align: center;">MAC</th>
                   <th scope="col" class="sort" data-sort="status" style="text-align: center;">TIME</th>
-                  <th scope="col" class="sort" data-sort="status" style="text-align: center;">LEVEL</th>
+                  <th scope="col" class="sort" data-sort="status" style="text-align: center;">UNIT</th>
                   <th scope="col" class="sort" data-sort="completion" style="text-align: center;">BEHAVIOR</th>
                 </tr>
               </thead>
@@ -59,22 +59,36 @@
                   <td class="budget" style="text-align: center; vertical-align: middle;">
                     <div class="d-flex align-items-center justify-content-center">
                       <span class="completion mr-2">connect to 000.000.000.000</span>
-                    </div>
+                    </div>                                                               
                   </td>
                 </tr>
                 {%else%}
                 {% for index, row in df_1.iterrows() %}
+                {%if row['label'] == 1%}
+                <tr style="background-color: rgb(255, 83, 83); color: white">
+                  <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">{{ row['IP'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['MAC'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['TIME_RECEIVE'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['UNIT_FULL_NAME'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="completion mr-2">{{ row['DESCRIPTION'] }} (MiAV)</span>
+                    </div>
+                  </td>
+                </tr>
+                {%else%}
                 <tr>
                   <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">{{ row['IP'] }}</td>
                   <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['MAC'] }}</td>
                   <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['TIME_RECEIVE'] }}</td>
-                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['ALERT_LEVEL_ID'] }}</td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">{{ row['UNIT_FULL_NAME'] }}</td>
                   <td class="budget" style="text-align: center; vertical-align: middle;">
                     <div class="d-flex align-items-center justify-content-center">
                       <span class="completion mr-2">{{ row['DESCRIPTION'] }}</span>
                     </div>
                   </td>
                 </tr>
+                {%endif%}
                 {% endfor %}
                 {%endif%}
               </tbody>
@@ -110,7 +124,6 @@
         var tableBody = $('.list');
         data = JSON.parse(data);
         data.forEach(function(row) {
-              // Tạo dòng mới với dữ liệu nhận được
               var newRow = `
                 <tr>
                   <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">
@@ -123,7 +136,7 @@
                     ${row.TIME_RECEIVE}
                   </td>
                   <td class="budget" style="text-align: center; vertical-align: middle;">
-                   ${row.ALERT_LEVEL_ID}
+                   ${row.UNIT_FULL_NAME}
                   </td>
                   <td class="budget" style="text-align: center; vertical-align: middle;">
                     <div class="d-flex align-items-center justify-content-center">
@@ -131,6 +144,28 @@
                     </div>
                   </td>
                 </tr>`;
+                if (row.label == 1){
+                  newRow = `
+                <tr style="background-color: rgb(255, 83, 83); color: white">
+                  <td class="budget justify-content-center" style="text-align: center; vertical-align: middle;">
+                    ${row.IP}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    ${row.MAC}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    ${row.TIME_RECEIVE}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                   ${row.UNIT_FULL_NAME}
+                  </td>
+                  <td class="budget" style="text-align: center; vertical-align: middle;">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <span class="completion mr-2">${row.DESCRIPTION} (MiAV)</span>
+                    </div>
+                  </td>
+                </tr>`;
+          }
               tableBody.append(newRow);
           });
       });

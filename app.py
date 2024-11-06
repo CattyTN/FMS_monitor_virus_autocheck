@@ -12,6 +12,7 @@ from flask_socketio import SocketIO, emit
 from sshtunnel import SSHTunnelForwarder
 from pymongo import MongoClient
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import re
 
 
 app = Flask(__name__)
@@ -26,6 +27,7 @@ login_manager.login_view = 'login'
 loop_active = False
 user_path = "user.xlsx"
 black_list_path = "black_list.xlsx"
+miav_database_path = "miav_database.xlsx"
 white_list_path= "white_list.xlsx"
 chart_path = "chart.xlsx"
 other_parameter_path = "parameter.xlsx"
@@ -262,6 +264,27 @@ def filtering(df, list):
 			df_filtered = df_filtered._append(a, ignore_index = True)
 	return df_filtered
 
+def match_miav_database(df_filtered):
+    print("==================test")
+    miav_database = get_list(miav_database_path)
+    miav_database = miav_database['ip'].tolist()
+    print(miav_database, type(miav_database)) 
+
+    df_filtered['extracted_ip'] = df_filtered['DESCRIPTION'].str.replace("connect to ", "", regex=False)
+
+    print(df_filtered['extracted_ip'])
+
+
+    def check_match(value):
+        return 1 if value in miav_database else 0
+    df_filtered['label'] = df_filtered['extracted_ip'].apply(check_match)
+
+    print(df_filtered)
+    print("==================test")
+    return df_filtered
+    
+
+
 def get_filter(formatted_date_1, formatted_date_2):
 	filter = {"time_receive":{"$gte": formatted_date_1,"$lte": formatted_date_2 }}
 	name = str(formatted_date_1) + '-' + str(formatted_date_2)
@@ -322,20 +345,22 @@ def core():
         database = get_database(database_path)
         rule = database['ip'].tolist()
         df_filtered = filtering(df, rule)
+        df_filtered_2 = match_miav_database(df_filtered)
+        #print(df_filtered_2)
         update_other_parameter(len(df), 'query')
         update_chart_parameter(df_filtered)
         count = len(df_filtered)
         update_other_parameter(count, 'detect')
         print(f"There are {count} alert for 300s from {before_start} to {start_time}")
-        if len(df_filtered) > 0:
-            print(df_filtered)
-            append_record_to_ram(ram_path, df_filtered)
+        if len(df_filtered_2) > 0:
+            #print(df_filtered)
+            append_record_to_ram(ram_path, df_filtered_2)
         a = a + 1
         end_time = datetime.now()
         elapsed_time = end_time - start_time
-        sleep_time =  max(0, (timedelta(seconds=5) - elapsed_time).total_seconds())
+        sleep_time =  max(0, (timedelta(seconds=10) - elapsed_time).total_seconds())
         time.sleep(sleep_time)
-        data = df_filtered.to_json(orient='records')
+        data = df_filtered_2.to_json(orient='records')
         if loop_active:
             socketio.emit('new_data', data)
 
@@ -433,4 +458,4 @@ def protected():
 #    socketio.run(app, debug=True)
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
-    #get_dashboard_parameter()
+
