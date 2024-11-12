@@ -152,7 +152,46 @@ def update_list():
     append_data_to_excel(black_list, white_list)       
     return redirect(url_for('virus_check'))
 
-    
+@app.route('/search_history', methods=['GET', 'POST'])
+@login_required
+def search_history():
+
+    ssh_host = "86.64.60.71"
+    ssh_port = 22
+    ssh_user = 'root'
+    ssh_password = 'P52abc@123456'
+
+    mongo_host = 'localhost.localdomain'
+    mongo_port = 27017
+    mongo_db = 'fms_v3'
+    mongo_collection = 'events'
+
+    before_start = '2024-08-19 23:59:59'
+    start_time = '2024-08-18 00:00:00'
+    filter,name = get_filter(before_start, start_time)
+
+    #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
+    #df = raw_to_df(result1)
+    #df = pd.DataFrame(df)
+
+    df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')
+
+    database = get_database(black_list_path)
+    rule = database['ip'].tolist()
+    df_filtered = filtering(df, rule)
+    df_filtered_2 = match_miav_database(df_filtered)
+
+    update_other_parameter(len(df), 'query')
+    update_chart_parameter(df_filtered)
+    count = len(df_filtered)
+    update_other_parameter(count, 'detect')
+    print(f"There are {count} alert for 300s from {before_start} to {start_time}")
+    if len(df_filtered_2) > 0:
+        reset_ram()
+        append_record_to_ram(ram_path, df_filtered_2)
+    return redirect(url_for('tables'))
+
+
 def update_chart_parameter(df_new):
     df = pd.read_excel(chart_path)
     for index, row in df_new.iterrows():
