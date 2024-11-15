@@ -547,64 +547,114 @@ window.addEventListener('load', function(){
 function update_button() {
 
     var e = document.getElementById("update_button");
-    e.addEventListener('click', function () {
-        // Lấy nội dung từ textarea
-        var textareaContent = document.getElementById('blacklist-textbox-update').value;
-        console.log('Nhật')
-        console.log(textareaContent)
-        // Chuyển nội dung thành mảng, mỗi dòng là một phần tử
-        var ipArray = textareaContent.split('\n').map(ip => ip.trim()).filter(ip => ip !== '');
-    
-        // Kiểm tra nếu textarea trống
-        if (ipArray.length === 0) {
+    if(e){
+        e.addEventListener('click', function () {
+            // Lấy nội dung từ textarea
+            var textareaContent = document.getElementById('blacklist-textbox-update').value;
+            console.log('Nhật')
+            console.log(textareaContent)
+            // Chuyển nội dung thành mảng, mỗi dòng là một phần tử
+            var ipArray = textareaContent.split('\n').map(ip => ip.trim()).filter(ip => ip !== '');
+        
+            // Kiểm tra nếu textarea trống
+            if (ipArray.length === 0) {
+                Swal.fire({
+                title: "Chưa nhập IP!",
+                text: "Hãy nhập danh sách IP cần cập nhật!",
+                icon: "warning"
+                });
+                return;
+            }
+        
+            // Chuyển mảng IP thành JSON string
+            var ipArrayJSON = JSON.stringify(ipArray);
+        
+            // Lấy giá trị và chỉ số của select box
+            var selectBox = document.getElementById('color-select');
+            var selectedList = selectBox.value;
+            var selectedIndex = selectBox.selectedIndex;
+        
+            // Tạo các input ẩn để chứa dữ liệu
+            var listTypeInput = document.createElement('input');
+            listTypeInput.type = 'hidden';
+            listTypeInput.name = 'listType';
+            listTypeInput.value = selectedList;
+        
+            var listIndexInput = document.createElement('input');
+            listIndexInput.type = 'hidden';
+            listIndexInput.name = 'listIndex';
+            listIndexInput.value = selectedIndex;
+        
+            var ipListInput = document.createElement('input');
+            ipListInput.type = 'hidden';
+            ipListInput.name = 'ips';
+            ipListInput.value = ipArrayJSON;
+        
+            // Tạo form và thêm các input ẩn vào
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/update_list';
+        
+            form.appendChild(listTypeInput);
+            form.appendChild(listIndexInput);
+            form.appendChild(ipListInput);
+        
+            // Thêm form vào body và tự động submit
+            document.body.appendChild(form);
+            form.submit();
+        
+            // Xóa form sau khi submit để tránh tạo nhiều form không cần thiết
+            document.body.removeChild(form);
+             
+        });
+    }
+}
+
+window.addEventListener('load', function(){
+    search_history_button()
+})
+
+function search_history_button() {
+
+    var e = document.getElementById("search_history_button");
+    if(e){
+        e.addEventListener('click', function () {
+        
+        var datetime1 = document.getElementById("datetimepicker").value
+        var datetime2 = document.getElementById("datetimepicker2").value
+        var formattedDatetime1 = datetime1.replace(/\//g, "-") + ":00"
+        var formattedDatetime2 = datetime2.replace(/\//g, "-") + ":00"
+        if ((datetime1 == '') || (datetime2 == '')){
             Swal.fire({
-            title: "Chưa nhập IP!",
-            text: "Hãy nhập danh sách IP cần cập nhật!",
-            icon: "warning"
+                title: "Chưa nhập ngày!",
+                text: "Hãy nhập đầy đủ ngày tháng.",
+                icon: "warning"
             });
-            return;
         }
-    
-        // Chuyển mảng IP thành JSON string
-        var ipArrayJSON = JSON.stringify(ipArray);
-    
-        // Lấy giá trị và chỉ số của select box
-        var selectBox = document.getElementById('color-select');
-        var selectedList = selectBox.value;
-        var selectedIndex = selectBox.selectedIndex;
-    
-        // Tạo các input ẩn để chứa dữ liệu
-        var listTypeInput = document.createElement('input');
-        listTypeInput.type = 'hidden';
-        listTypeInput.name = 'listType';
-        listTypeInput.value = selectedList;
-    
-        var listIndexInput = document.createElement('input');
-        listIndexInput.type = 'hidden';
-        listIndexInput.name = 'listIndex';
-        listIndexInput.value = selectedIndex;
-    
-        var ipListInput = document.createElement('input');
-        ipListInput.type = 'hidden';
-        ipListInput.name = 'ips';
-        ipListInput.value = ipArrayJSON;
-    
-        // Tạo form và thêm các input ẩn vào
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/update_list';
-    
-        form.appendChild(listTypeInput);
-        form.appendChild(listIndexInput);
-        form.appendChild(ipListInput);
-    
-        // Thêm form vào body và tự động submit
-        document.body.appendChild(form);
-        form.submit();
-    
-        // Xóa form sau khi submit để tránh tạo nhiều form không cần thiết
-        document.body.removeChild(form);
-         
-    });
-    
+        else{
+            $.ajax({
+                type: 'POST',
+                url: '/search_history',
+                data: {
+                    date_1: formattedDatetime1,
+                    date_2: formattedDatetime2,
+                },
+                success: function(response) {
+                    console.log(response)
+                    if (response == '1'){
+                        Swal.fire({
+                            title: "Bắt đầu!",
+                            text: "Bắt đầu hoạt động giám sát!",
+                            icon: "success"
+                          });
+                    }
+                },
+                error: function(error) {
+                    console.log("error");
+                }
+            });
+        }
+
+        });
+    }
 }

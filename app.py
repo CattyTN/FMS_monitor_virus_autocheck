@@ -80,6 +80,11 @@ def index():
     df_1_json = df_1.to_dict(orient='records')
     return render_template('index.html',df_1_json=df_1_json, df_2 = df_2)
 
+@app.route('/search_history', methods=['GET', 'POST'])
+@login_required
+def search_history():
+    file_name = request.form.get('a')
+
 
 @app.route('/ip_upload', methods=['GET', 'POST'])
 @login_required

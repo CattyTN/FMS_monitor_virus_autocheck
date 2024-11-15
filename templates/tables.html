@@ -8,10 +8,25 @@
     <div class="container-fluid">
       <div class="header-body">
         <div class="row align-items-center py-4">
-          <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Giám sát FMS</h6>
+          <div class="col-lg-9 col-7">
+            <div class="row">
+              <div class="col-3">
+                <h6 class="h2 text-white d-inline-block mb-0" id="h6test">Giám sát FMS</h6>
+              </div>
+              <div class="col-3 d-flex align-items-center">
+                <input id="datetimepicker" type="text" >
+              </div>
+
+              <div class="col-3 d-flex align-items-center">
+                <input id="datetimepicker2" type="text" >
+              </div>
+              <div class="col-3 d-flex align-items-center justify-content-center">
+                <a href="#" id ="search_history_button" class="btn btn-sm btn-neutral" style = "background-color: white;">LỌC</a>
+              </div>
+
+            </div>
           </div>
-          <div class="col-lg-6 col-5 text-right">
+          <div class="col-lg-3 col-5 text-right">
             <a href="#" id ="start_button" class="btn btn-sm btn-neutral" style = "background-color: white;">GIÁM SÁT</a>
             <a href="#" id ="end_button" class="btn btn-sm btn-neutral" style = "background-color: white;">DỪNG</a>
           </div>
@@ -171,6 +186,18 @@
       });
   });
 </script>
+
+<script>
+  $(function() {
+    $('#datetimepicker').datetimepicker();
+  });
+</script>
+<script>
+  $(function() {
+    $('#datetimepicker2').datetimepicker();
+  });
+</script>
+
 {% endblock javascripts %}
 
 
