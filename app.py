@@ -80,10 +80,7 @@ def index():
     df_1_json = df_1.to_dict(orient='records')
     return render_template('index.html',df_1_json=df_1_json, df_2 = df_2)
 
-@app.route('/search_history', methods=['GET', 'POST'])
-@login_required
-def search_history():
-    file_name = request.form.get('a')
+
 
 
 @app.route('/ip_upload', methods=['GET', 'POST'])
@@ -309,22 +306,15 @@ def filtering(df, list):
 	return df_filtered
 
 def match_miav_database(df_filtered):
-    print("==================test")
     miav_database = get_list(miav_database_path)
     miav_database = miav_database['ip'].tolist()
-    print(miav_database, type(miav_database)) 
 
     df_filtered['extracted_ip'] = df_filtered['DESCRIPTION'].str.replace("connect to ", "", regex=False)
-
-    print(df_filtered['extracted_ip'])
-
 
     def check_match(value):
         return 1 if value in miav_database else 0
     df_filtered['label'] = df_filtered['extracted_ip'].apply(check_match)
 
-    print(df_filtered)
-    print("==================test")
     return df_filtered
     
 
