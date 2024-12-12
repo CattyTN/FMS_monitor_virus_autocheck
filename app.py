@@ -157,6 +157,7 @@ def update_list():
 @app.route('/search_history', methods=['GET', 'POST'])
 @login_required
 def search_history():
+    reset_ram()
 
     ssh_host = "86.64.60.71"
     ssh_port = 22
@@ -189,9 +190,8 @@ def search_history():
     update_other_parameter(count, 'detect')
     print(f"There are {count} alert for 300s from {before_start} to {start_time}")
     if len(df_filtered_2) > 0:
-        reset_ram()
         append_record_to_ram(ram_path, df_filtered_2)
-    return redirect(url_for('tables'))
+    return '1'
 
 
 def update_chart_parameter(df_new):

@@ -640,14 +640,7 @@ function search_history_button() {
                     date_2: formattedDatetime2,
                 },
                 success: function(response) {
-                    console.log(response)
-                    if (response == '1'){
-                        Swal.fire({
-                            title: "Bắt đầu!",
-                            text: "Bắt đầu hoạt động giám sát!",
-                            icon: "success"
-                          });
-                    }
+                    window.location.href = "/tables";
                 },
                 error: function(error) {
                     console.log("error");
