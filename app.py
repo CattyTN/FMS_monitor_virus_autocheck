@@ -176,7 +176,7 @@ def search_history():
     #result1 = get_mongo_data(ssh_host, ssh_port, ssh_user, ssh_password, mongo_host, mongo_port, mongo_db, mongo_collection, filter, sample_size=10)
     #df = raw_to_df(result1)
     #df = pd.DataFrame(df)
-
+    time.sleep(5)
     df = pd.read_excel(r'2024-08-19-2024-08-20-records.xlsx')
 
     database = get_database(black_list_path)
