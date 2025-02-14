@@ -227,6 +227,7 @@ def check(file_name):
     df_result = auto_check_virus_total(df_to_check, api_key)
     df_malicious = df_result[df_result['check_result'] != 0]
     df_normal = df_result[df_result['check_result'] == 0]
+    print(df_malicious)
     return pd.DataFrame(df_malicious['ip']), pd.DataFrame(df_normal['ip'])
 
 def check_2(df):
@@ -294,7 +295,6 @@ def append_data_to_excel(black_list, white_list):
 def get_database(file_path):
 	df = pd.read_excel(file_path)
 	df.columns = ['ip']
-     
 	return df
 
 def filtering(df, list):
@@ -302,6 +302,14 @@ def filtering(df, list):
 	for _,row in df.iterrows():
 		a = row
 		if any(key in str(a['DESCRIPTION']) for key in list):
+			df_filtered = df_filtered._append(a, ignore_index = True)
+	return df_filtered
+# Hàm filtering, bỏ các white record, giữ lại black và gray
+def filtering_2(df, list):
+	df_filtered = pd.DataFrame(columns = df.columns)
+	for _,row in df.iterrows():
+		a = row
+		if not any(key in str(a['DESCRIPTION']) for key in list):
 			df_filtered = df_filtered._append(a, ignore_index = True)
 	return df_filtered
 
@@ -314,7 +322,7 @@ def match_miav_database(df_filtered):
     def check_match(value):
         return 1 if value in miav_database else 0
     df_filtered['label'] = df_filtered['extracted_ip'].apply(check_match)
-
+    print(df_filtered)
     return df_filtered
     
 
@@ -358,13 +366,13 @@ def core():
     ssh_host = "86.64.60.71"
     ssh_port = 22
     ssh_user = 'root'
-    ssh_password = 'P52abc@123456'
+    ssh_password = 'P52abc@123456'  
 
     mongo_host = 'localhost.localdomain'
     mongo_port = 27017
     mongo_db = 'fms_v3'
     mongo_collection = 'events'
-    database_path = black_list_path
+    database_path = white_list_path
     a = 1
     global loop_active
     while loop_active:
@@ -401,7 +409,6 @@ def core():
 @app.route('/start', methods=['GET', 'POST'])
 @login_required
 def start():
-    reset_ram()
     global loop_active
     if not loop_active:
         loop_active = True

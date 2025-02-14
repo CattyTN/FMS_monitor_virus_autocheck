@@ -651,3 +651,26 @@ function search_history_button() {
         });
     }
 }
+
+$.ajax({
+    type: 'POST',
+    url: '/search_history',
+    data: {
+        date_1: formattedDatetime1,
+        date_2: formattedDatetime2,
+    },
+    success: function(response) {
+        swal({
+            title: "Cảnh báo",
+            text: "Bạn sẽ được chuyển đến trang bảng!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willRedirect) => {
+                window.location.href = "/tables";
+        });
+    },
+    error: function(error) {
+        console.log("error");
+    }
+});
